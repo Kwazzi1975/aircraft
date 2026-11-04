@@ -24,6 +24,10 @@
 !GEMINI.md
 !CLAUDE.md
 
+!/.cursor/
+!/.cursor/install.sh
+!/.cursor/environment.json
+
 !igniter.config.mjs
 !jsconfig.json
 
