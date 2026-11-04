@@ -144,3 +144,13 @@ Before handing off a change:
 2. Run lint/tests for touched languages and a focused build for affected instruments or aircraft.
 3. Keep `pnpm-lock.yaml` and `Cargo.lock` changes intentional.
 4. For contributions, follow `.github/Contributing.md`: realism changes need supporting documentation, commits/PR titles use Conventional Commits, and qualifying user-visible changes require an entry in `.github/CHANGELOG.md` as described above.
+
+## Cursor Cloud specific instructions
+
+Cloud Agents install a host toolchain from `.cursor/install.sh` (also inlined as `install` in `.cursor/environment.json`). Do not use `scripts/dev-env/run.sh` here: that wrapper runs the private `ghcr.io/flybywiresim/dev-env` image and needs Docker.
+
+- `pnpm` is `/usr/local/bin/pnpm` (pnpm 10.33.4). Login shells do not load nvm, so a `pnpm` that only exists under `~/.nvm` is not available during `install`.
+- Rust comes from `rust-toolchain.toml` (1.96.0, `wasm32-wasip1`, rustfmt, clippy). `wasm-opt` is Binaryen 130. `wasm-ld` comes from Ubuntu `lld` 18.
+- TypeScript checks: `pnpm test`, and `FBW_TYPECHECK=1 pnpm exec mach build --config fbw-a32nx/mach.config.js --work-in-config-dir -f PFD` for one instrument. Rust checks: `cargo test -p a320_systems` (or `-p a380_systems`). `cargo test` for the whole workspace enables LTO in the test profile and takes much longer.
+- Do not run `git submodule update --init` unless the task needs aircraft textures. The `large-files` submodule is about 13 GB.
+- C++ flight-control and FADEC WASM modules need the Microsoft Flight Simulator SDK (`MSFS_SDK`), which is only inside the private dev-env image. Rust system tests and Mach instrument builds do not.
